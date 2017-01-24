@@ -5,6 +5,7 @@
 
 typedef struct {
     int shear_style;
+    int scstyle;
 
     int64 index;   // index in the lens list
     double weight;
@@ -13,14 +14,16 @@ typedef struct {
     int64 nbin;
     int64* npair;
 
-    double* rsum;
-    double* wsum;
-    double* dsum;
-    double* osum;
-
-    // only used for lensfit style
-    double* dsensum;
-    double* osensum;
+    double* rsum; // sum of weight*radius
+    double* wsum; // sum of weight
+    double* ssum; // sum of weight*scinv
+    double* dsum; // sum of weight*gt
+    double* osum; // sum of weight*gx
+    
+    double* dsensum_w; // sum of weight*sens_t
+    double* osensum_w; // sum of weight*sens_x
+    double* dsensum_s; // sum of weight*scinv*sens_t; need this because sens and scinv might correlate
+    double* osensum_s; // sum of weight*scinv*sens_t
 } Lensum;
 
 typedef struct {
@@ -29,7 +32,7 @@ typedef struct {
 } Lensums;
 
 
-Lensums* lensums_new(size_t nlens, size_t nbin, int shear_style);
+Lensums* lensums_new(size_t nlens, size_t nbin, int shear_style, int scstyle);
 
 // this one we write all the data out in binary format
 void lensums_write(Lensums* self, FILE* stream);
@@ -44,7 +47,7 @@ Lensums* lensums_free(Lensums* lensum);
 
 
 
-Lensum* lensum_new(size_t nbin, int shear_style);
+Lensum* lensum_new(size_t nbin, int shear_style, int scstyle);
 int lensum_read_into(Lensum* self, FILE* stream);
 Lensum* lensum_copy(Lensum* lensum);
 void lensum_add(Lensum* self, Lensum* src);

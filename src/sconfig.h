@@ -13,9 +13,11 @@ typedef struct {
 
     int64 healpix_nside;
 
-    int shear_style;
-    int mask_style;
-    int scstyle;
+    int shear_style;    // REDUCED or LENSFIT
+    int mask_style;     // NONE, SDSS or EQ
+    int scstyle;        // POINT, INTERP or SAMPLE
+    int sourceid_style; // NONE or INDEX
+    int weight_style;   // UNIFORM or OPTIMAL
 
     // if the distance to the lens is input
     int Dlens_input;
@@ -28,8 +30,10 @@ typedef struct {
     int64 nbin;
 
     int r_units; // units for radius
-    int shear_units; // units for shear, deltasig or shear
-
+    
+    int64 rbin_print_max; // r bin number out to which pairs are printed to file; 0 for no printing
+    FILE *pair_fd; // file descriptor of pair log file
+    
     double rmin; // mpc/h
     double rmax;
 
@@ -54,5 +58,6 @@ ShearConfig* sconfig_read(const char* url);
 
 ShearConfig* sconfig_free(ShearConfig* config);
 void sconfig_print(ShearConfig* config);
+void sconfig_open_pair_url(ShearConfig* config, const char* url);
 
 #endif
